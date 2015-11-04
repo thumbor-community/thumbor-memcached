@@ -1,0 +1,38 @@
+# This file is part of thumbor-memcached.
+# https://github.com/thumbor-community/thumbor-memcached
+
+# Licensed under the MIT license:
+# http://www.opensource.org/licenses/MIT-license
+# Copyright (c) 2015, Bernardo Heynemann <heynemann@gmail.com>
+
+language: python
+python:
+  - 2.7_with_system_site_packages
+  - '3.2'
+  - pypy
+cache:
+  directories:
+    - $HOME/.cache/pip
+sudo: false
+matrix:
+  fast_finish: true
+  allow_failures:
+    - python: '3.2'
+    - python: pypy
+addons:
+  apt:
+    packages:
+    - libcurl4-openssl-dev
+    - memcached
+    - libmemcache-dev
+    - libmemcached-dev
+install:
+  - pip install --upgrade pip
+  - make setup
+  - pip install coveralls
+before_script:
+  - make memcached
+script:
+  make test
+after_success:
+  coveralls
