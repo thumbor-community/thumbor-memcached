@@ -8,6 +8,8 @@ thumbor-memcached provides storages using memcached as a backend.
 
 Before installing, make sure both `memcached` and `libmemcached are installed and accessible to python.
 
+    $ pip install thumbor-memcached
+
 ## Configuration
 
 ```
