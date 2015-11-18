@@ -14,6 +14,7 @@ import hashlib
 import pylibmc
 
 from thumbor.storages import BaseStorage
+from thumbor.utils import logger
 from tornado.concurrent import return_future
 
 
@@ -46,7 +47,11 @@ class Storage(BaseStorage):
         return self.get_hash('thumbor-detector-%s' % url)
 
     def put(self, path, contents):
-        self.storage.set(self.key_for(path), contents, time=self.context.config.STORAGE_EXPIRATION_SECONDS)
+        key = self.key_for(path)
+        try:
+            self.storage.set(key, contents, time=self.context.config.STORAGE_EXPIRATION_SECONDS)
+        except:
+            logger.exception("[MEMCACHED] failed to set key '{0}'".format(key));
         return path
 
     def put_crypto(self, path):
@@ -57,12 +62,18 @@ class Storage(BaseStorage):
             raise RuntimeError("STORES_CRYPTO_KEY_FOR_EACH_IMAGE can't be True if no SECURITY_KEY specified")
 
         key = self.crypto_key_for(path)
-        self.storage.set(key, self.context.server.security_key)
+        try:
+            self.storage.set(key, self.context.server.security_key)
+        except:
+            logger.exception("[MEMCACHED] failed to set key '{0}'".format(key));
         return key
 
     def put_detector_data(self, path, data):
         key = self.detector_key_for(path)
-        self.storage.set(key, dumps(data))
+        try:
+            self.storage.set(key, dumps(data))
+        except:
+            logger.exception("[MEMCACHED] failed to set key '{0}'".format(key));
         return key
 
     @return_future
