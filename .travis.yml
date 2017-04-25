@@ -27,7 +27,7 @@ addons:
     - libmemcache-dev
     - libmemcached-dev
 install:
-  - pip install --upgrade pip
+  - pip install --upgrade pip wheel setuptools
   - make setup
   - pip install coveralls
 before_script:
